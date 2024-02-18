@@ -1,0 +1,10 @@
+@if(type==='icon'){
+<button mat-icon-button (click)="onClick()" [color]="color" [disabled]="disabled">
+  <ng-content></ng-content>
+</button>
+}
+@else{
+<button mat-stroked-button (click)="onClick()" [color]="color" [disabled]="disabled">
+  <ng-content></ng-content>
+</button>
+}

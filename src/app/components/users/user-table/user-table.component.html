@@ -1,0 +1,126 @@
+<table mat-table [dataSource]="userData" multiTemplateDataRows class="mat-elevation-z8">
+  <caption>
+    <h1 class="header">USER MANAGEMENT</h1>
+  </caption>
+
+  @for (column of columnsToDisplay; track column) {
+  <ng-container matColumnDef="{{ column }}">
+    <th mat-header-cell *matHeaderCellDef>{{ column | uppercase }}</th>
+    <td mat-cell *matCellDef="let element">
+      @if(element[column]){
+      {{ element[column] }}
+      }
+      @else {
+      <ngx-skeleton-loader count="1" />
+      }
+    </td>
+  </ng-container>
+  }
+
+
+
+  <ng-container matColumnDef="expand">
+    <th mat-header-cell *matHeaderCellDef aria-label="row actions">&nbsp;</th>
+    <td mat-cell *matCellDef="let element">
+      <button *ngIf="userData[0].firstName" mat-icon-button aria-label="expand row"
+        (click)="expandClick(element); $event.stopPropagation()">
+        @if (expandedElement === element) {
+        <mat-icon>keyboard_arrow_up</mat-icon>
+        } @else {
+        <mat-icon>keyboard_arrow_down</mat-icon>
+        }
+      </button>
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="expandedDetail">
+    <td mat-cell *matCellDef="let element" [attr.colspan]="columnsToDisplayWithExpand.length">
+      <div *ngIf="userData && userData[0].firstName" class="example-element-detail"
+        [@detailExpand]="element == expandedElement ? 'expanded' : 'collapsed'">
+        <form [formGroup]="contactForm">
+          <div class="form">
+            <div class="row">
+              <div class="input-field">
+
+                <label>First name</label>
+                <div class="input">
+                  <input type="text" id="firstName" formControlName="firstName" />
+
+                  <div class="error-msg"
+                    *ngIf="formControls['firstName'].errors && formControls['firstName'].errors['required']">
+                    First Name is required
+                  </div>
+                </div>
+              </div>
+
+              <div class="input-field">
+
+                <label>Age</label>
+                <div class="input">
+                  <input type="number" id="age" formControlName="age" />
+
+                  <div class="error-msg" *ngIf="formControls['age'].errors && formControls['age'].errors['required']">
+                    Age is required
+                  </div>
+                  <div class="error-msg" *ngIf="formControls['age'].errors && formControls['age'].errors['min']">
+                    Age should be greater than 0
+                  </div>
+                </div>
+              </div>
+
+            </div>
+            <div class="row">
+              <div class="input-field">
+
+                <label>Last name</label>
+                <div class="input">
+                  <input type="text" id="lastName" formControlName="lastName" />
+
+                  <div class="error-msg"
+                    *ngIf="formControls['lastName'].errors && formControls['lastName'].errors['required']">
+                    Last Name is required
+                  </div>
+                </div>
+              </div>
+              <div class="input-field">
+
+                <label>Email</label>
+                <div class="input">
+                  <input type="email" id="email" formControlName="email" />
+
+                  <div class="error-msg"
+                    *ngIf="formControls['email'].errors && formControls['email'].errors['required']">
+                    Email is required
+                  </div>
+                  <div class="error-msg"
+                    *ngIf="formControls['email'].errors && formControls['email'].errors['pattern']">
+                    Email must be a valid email address
+                  </div>
+                </div>
+              </div>
+
+
+            </div>
+          </div>
+          <br />
+          <div class="button-container">
+            <app-button (buttonClick)="onSave()" [disabled]="showButtonSpinner || !contactForm.valid">
+              <app-spinner *ngIf="showButtonSpinner" [diameter]="15"></app-spinner>
+              &nbsp; {{ showButtonSpinner ? "Saving" : "Save" }} &nbsp;
+            </app-button>
+            <app-button (buttonClick)="onCancel()" color="accent" [disabled]="showButtonSpinner">
+              Cancel
+            </app-button>
+          </div>
+        </form>
+      </div>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplayWithExpand; sticky: true"></tr>
+  <tr mat-row *matRowDef="let element; columns: columnsToDisplayWithExpand" class="example-element-row"
+    [class.example-expanded-row]="expandedElement === element" (click)="expandClick(element); $event.stopPropagation()">
+  </tr>
+
+  <tr mat-row *matRowDef="let row; columns: ['expandedDetail']" class="example-detail-row"></tr>
+</table>
